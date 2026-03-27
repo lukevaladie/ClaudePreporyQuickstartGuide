@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prepory — Claude Quickstart Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --green: #25D36B;
+      --dark: #0B473B;
+      --dark-light: #0d5a4a;
+      --text: #444;
+      --text-light: #666;
+      --text-muted: #999;
+      --bg: #ffffff;
+      --bg-subtle: #fafafa;
+      --border: rgba(11,71,59,0.06);
+      --radius: 16px;
+      --max-w: 700px;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* --- NAV --- */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(11,71,59,0.08);
+      display: flex; align-items: center; gap: 2px;
+      padding: 0 24px; overflow-x: auto;
+    }
+    .nav-brand {
+      font-weight: 900; font-size: 13px; color: var(--dark);
+      letter-spacing: -0.3px; white-space: nowrap; padding: 16px 0;
+      margin-right: 20px; display: flex; align-items: center; gap: 7px;
+    }
+    .nav-brand span {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: 6px;
+      background: var(--green); color: #fff; font-size: 11px; font-weight: 900;
+    }
+    nav a {
+      text-decoration: none; padding: 16px 14px; font-size: 12.5px;
+      font-weight: 600; color: var(--text-muted); white-space: nowrap;
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    nav a:hover, nav a.active { color: var(--dark); border-bottom-color: var(--green); }
+
+    /* --- HERO --- */
+    .hero {
+      background: var(--dark); padding: 72px 32px 64px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -100px; right: -80px;
+      width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(37,211,107,0.07) 0%, transparent 70%);
+    }
+    .hero::after {
+      content: ''; position: absolute; bottom: -60px; left: -40px;
+      width: 240px; height: 240px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(37,211,107,0.04) 0%, transparent 70%);
+    }
+    .hero-inner { max-width: 600px; margin: 0 auto; position: relative; }
+    .hero-badge {
+      display: inline-block; background: rgba(37,211,107,0.12);
+      border: 1px solid rgba(37,211,107,0.27); border-radius: 8px;
+      padding: 6px 14px; font-size: 11px; font-weight: 700;
+      color: var(--green); letter-spacing: 0.8px; text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      color: #fff; font-size: clamp(32px, 5vw, 42px); font-weight: 900;
+      letter-spacing: -1.2px; line-height: 1.1; margin-bottom: 16px;
+    }
+    .hero h1 em { font-style: normal; color: var(--green); }
+    .hero p { color: rgba(255,255,255,0.53); font-size: 15px; max-width: 440px; font-weight: 500; }
+    .hero-pills { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+    .hero-pill {
+      background: rgba(255,255,255,0.04); border-radius: 10px; padding: 10px 18px;
+      color: rgba(255,255,255,0.6); font-size: 12px; font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; gap: 6px;
+    }
+
+    /* --- CONTENT --- */
+    .content { max-width: var(--max-w); margin: 0 auto; padding: 48px 24px 80px; }
+
+    .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+    .section-header .icon { font-size: 24px; }
+    h2 {
+      font-size: 28px; font-weight: 900; color: var(--dark);
+      letter-spacing: -0.5px; line-height: 1.2;
+    }
+    .section-subtitle {
+      color: var(--text-muted); font-size: 14px; font-weight: 500;
+      margin: 6px 0 28px; line-height: 1.7;
+    }
+    h3 {
+      font-size: 16px; font-weight: 700; color: var(--dark);
+      letter-spacing: -0.2px; margin: 36px 0 10px;
+    }
+    p { font-weight: 500; margin-bottom: 8px; }
+
+    /* --- CARDS --- */
+    .card-row { display: flex; gap: 10px; margin: 16px 0; flex-wrap: wrap; }
+    .card {
+      background: var(--bg-subtle); border-radius: 14px; padding: 18px 20px;
+      border: 1px solid var(--border); flex: 1 1 140px; min-width: 140px;
+    }
+    .card .card-icon { font-size: 20px; margin-bottom: 8px; }
+    .card .card-title { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .card .card-desc { font-size: 12.5px; color: #777; font-weight: 500; line-height: 1.5; }
+
+    /* --- SCREENSHOTS --- */
+    figure { margin: 28px 0; }
+    figure .img-wrap {
+      border-radius: var(--radius); overflow: hidden; background: #f5f5f5;
+      box-shadow: 0 8px 32px rgba(11,71,59,0.08), 0 1px 3px rgba(0,0,0,0.06);
+      border: 1px solid var(--border);
+    }
+    figure img { width: 100%; display: block; }
+    figcaption {
+      font-size: 12px; color: var(--text-muted); margin-top: 10px;
+      text-align: center; font-weight: 500; letter-spacing: 0.2px;
+    }
+
+    /* --- TIPS --- */
+    .tip {
+      background: rgba(11,71,59,0.03); border-left: 3px solid var(--green);
+      border-radius: 0 12px 12px 0; padding: 16px 20px;
+      margin: 20px 0; font-size: 13.5px; line-height: 1.7;
+      color: rgba(11,71,59,0.87); font-weight: 500;
+    }
+    .tip strong:first-child { font-weight: 700; color: var(--dark); margin-right: 6px; }
+
+    /* --- STEPS --- */
+    .steps { margin: 20px 0; }
+    .step { display: flex; gap: 16px; margin-bottom: 16px; align-items: flex-start; }
+    .step-num {
+      min-width: 28px; height: 28px; border-radius: 8px;
+      background: var(--green); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 12px; margin-top: 2px;
+    }
+    .step-text { font-size: 14.5px; line-height: 1.7; font-weight: 500; padding-top: 2px; }
+
+    /* --- DIVIDER --- */
+    .divider {
+      height: 1px; margin: 60px 0 52px;
+      background: linear-gradient(to right, transparent, rgba(11,71,59,0.08), transparent);
+    }
+
+    /* --- BADGE --- */
+    .badge {
+      display: inline-block; background: rgba(37,211,107,0.09);
+      color: var(--dark); font-size: 10px; font-weight: 700;
+      padding: 4px 10px; border-radius: 6px; letter-spacing: 0.8px;
+      text-transform: uppercase; margin-left: 10px; vertical-align: middle;
+      border: 1px solid rgba(37,211,107,0.27);
+    }
+
+    /* --- FOOTER --- */
+    .footer {
+      margin-top: 64px; padding: 40px 32px; text-align: center;
+      background: var(--dark); border-radius: 20px;
+      position: relative; overflow: hidden;
+    }
+    .footer::before {
+      content: ''; position: absolute; top: -40px; right: -40px;
+      width: 160px; height: 160px; border-radius: 50%;
+      background: rgba(37,211,107,0.08);
+    }
+    .footer h3 { color: #fff; font-size: 22px; font-weight: 900; letter-spacing: -0.5px; margin-bottom: 10px; position: relative; }
+    .footer p {
+      color: rgba(255,255,255,0.53); font-size: 13.5px; font-weight: 500;
+      max-width: 400px; margin: 0 auto; line-height: 1.7; position: relative;
+    }
+
+    /* --- LISTS --- */
+    ul { padding-left: 20px; margin: 10px 0; }
+    li { font-size: 14px; line-height: 1.8; margin-bottom: 2px; font-weight: 500; }
+
+    /* --- SCROLLBAR --- */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: rgba(11,71,59,0.15); border-radius: 3px; }
+
+    @media (max-width: 600px) {
+      .hero { padding: 48px 20px 40px; }
+      .content { padding: 32px 16px 60px; }
+      h2 { font-size: 24px; }
+      .card-row { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand"><span>C</span> Quickstart</div>
+  <a href="#chat">Chat</a>
+  <a href="#artifacts">Artifacts</a>
+  <a href="#projects">Projects</a>
+  <a href="#memory">Memory</a>
+  <a href="#cowork">Cowork</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">Prepory Team Guide</div>
+    <h1>Get started<br>with <em>Claude</em></h1>
+    <p>Everything you need to go from first chat to full productivity with Prepory's AI workspace.</p>
+    <div class="hero-pills">
+      <div class="hero-pill">📖 5 min read</div>
+      <div class="hero-pill">🛠 5 features</div>
+      <div class="hero-pill">⚡ Zero setup</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- ═══════════ CHAT ═══════════ -->
+  <section id="chat">
+    <div class="section-header">
+      <span class="icon">💬</span>
+      <h2>Chat Basics</h2>
+    </div>
+    <p class="section-subtitle">The chat interface is where you'll spend most of your time. Here's what matters.</p>
+
+    <h3>Pick the right model</h3>
+    <p>Click the <strong>model selector</strong> below the input to switch between models:</p>
+    <div class="card-row">
+      <div class="card">
+        <div class="card-icon">🔮</div>
+        <div class="card-title">Opus 4.6</div>
+        <div class="card-desc">Most capable. Complex analysis and nuanced work.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">Sonnet 4.6</div>
+        <div class="card-desc">Balanced speed and intelligence. Great for quick tasks.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏃</div>
+        <div class="card-title">Haiku 4.5</div>
+        <div class="card-desc">Fastest. Quick questions and simple tasks.</div>
+      </div>
+    </div>
+    <figure>
+      <div class="img-wrap"><img src="https://drive.google.com/uc?export=view&id=1UPynPUWnDAuSmo5rB80DbYX7bCj_bQki" alt="Model selector dropdown"></div>
+      <figcaption>Switch models anytime from the input area</figcaption>
+    </figure>
+
+    <h3>Search, tools & file uploads</h3>
+    <p>The <strong>Search and tools</strong> button (lower-left of input) is your control center for toggling extended thinking, web search, and styles. The <strong>+</strong> button handles file uploads — PDFs, spreadsheets, images, and more (up to 30 MB each).</p>
+    <figure>
+      <div class="img-wrap"><img src="https://drive.google.com/uc?export=view&id=18pgHwzBgKSptbUXPvuCW_9dy6vtpcn7t" alt="Search and tools menu"></div>
+      <figcaption>Toggle search, thinking, and styles — plus upload files via the + button</figcaption>
+    </figure>
+    <div class="tip"><strong>Tip</strong> Say "search the web for…" in your message to make sure Claude pulls live results.</div>
+
+    <h3>Styles</h3>
+    <p>Styles adjust Claude's tone and format. Four presets are built in — Normal, Concise, Formal, and Explanatory — and you can create custom ones from writing samples or descriptions.</p>
+    <figure>
+      <div class="img-wrap"><img src="https://drive.google.com/uc?export=view&id=1MJ6veQ0XtyBq4X49JIiHSzJrGoNFwmIb" alt="Style selection panel"></div>
+      <figcaption>Switch styles mid-conversation without losing context</figcaption>
+    </figure>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════ ARTIFACTS ═══════════ -->
+  <section id="artifacts">
+    <div class="section-header">
+      <span class="icon">✨</span>
+      <h2>Artifacts</h2>
+    </div>
+    <p class="section-subtitle">When Claude creates something substantial — a document, code, an interactive app — it appears in a dedicated panel to the right. These are artifacts: Claude's deliverables.</p>
+
+    <h3>What can Claude create?</h3>
+    <div class="card-row">
+      <div class="card">
+        <div class="card-icon">📄</div>
+        <div class="card-title">Documents</div>
+        <div class="card-desc">Markdown, Word, PDF, PowerPoint</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">💻</div>
+        <div class="card-title">Code & Apps</div>
+        <div class="card-desc">Any language, interactive React apps</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <div class="card-title">Visuals</div>
+        <div class="card-desc">Charts, SVGs, diagrams, HTML pages</div>
+      </div>
+    </div>
+
+    <h3>Iterate and share</h3>
+    <p>Ask for changes and Claude updates the artifact in place. Flip through versions with the version selector. Hit <strong>Share</strong> to create a team-only link — only authenticated Prepory members can view it.</p>
+    <figure>
+      <div class="img-wrap"><img src="https://drive.google.com/uc?export=view&id=1MLubJD0jKglhn3Q4AusiSGzQCV6AihOx" alt="Artifact panel"></div>
+      <figcaption>Artifacts appear alongside the conversation — iterate and share from here</figcaption>
+    </figure>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════ PROJECTS ═══════════ -->
+  <section id="projects">
+    <div class="section-header">
+      <span class="icon">📁</span>
+      <h2>Projects</h2>
+    </div>
+    <p class="section-subtitle">Persistent workspaces where every conversation shares the same knowledge base and instructions.</p>
+
+    <h3>The sidebar</h3>
+    <p>Your home base for navigating chats, projects, and artifacts.</p>
+    <figure>
+      <div class="img-wrap"><img src="https://drive.google.com/uc?export=view&id=1CWr58ZnUIZy7xRqnlC5upnhC5zR6IWoY" alt="Sidebar navigation"></div>
+      <figcaption>Quick access to everything from the left sidebar</figcaption>
+    </figure>
+
+    <h3>Create a project</h3>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-text">Click <strong>Projects</strong> in the sidebar, then <strong>+ New Project</strong>.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">Give it a name and description.</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">Choose visibility — private or shared with your org.</div></div>
+    </div>
+    <figure>
+      <div class="img-wrap"><img src="https://drive.google.com/uc?export=view&id=1lpUtyMda4-IhTkwLkW1LoaAjPSQ9Fxu9" alt="New project dialog"></div>
+      <figcaption>Name it, describe it, set who can see it</figcaption>
+    </figure>
+
+    <h3>Add knowledge & instructions</h3>
+    <p>Upload documents to the <strong>knowledge base</strong> — unlike single-chat uploads, these are available to every conversation in the project. Set <strong>project instructions</strong> to tell Claude what role to play, what format to use, or what terminology matters.</p>
+    <figure>
+      <div class="img-wrap"><img src="https://drive.google.com/uc?export=view&id=1kGC-WusvQ6Jo204Y1I0ZI_pm6R5MIJQR" alt="Project knowledge and instructions"></div>
+      <figcaption>Files and instructions apply to every conversation in the project</figcaption>
+    </figure>
+
+    <h3>Share with teammates</h3>
+    <p>Add members with <strong>Can use</strong> (chat only) or <strong>Can edit</strong> (full control) permissions.</p>
+    <figure>
+      <div class="img-wrap"><img src="https://drive.google.com/uc?export=view&id=1YcxJEHz_VrudjHI5TeVMjb328aiKUZrR" alt="Project sharing"></div>
+      <figcaption>Invite specific people or open it to your whole organization</figcaption>
+    </figure>
+    <div class="tip"><strong>Tip</strong> Your chats in a shared project stay <strong>private by default</strong> — everyone gets their own conversations using the shared knowledge.</div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════ MEMORY ═══════════ -->
+  <section id="memory">
+    <div class="section-header">
+      <span class="icon">🧠</span>
+      <h2>Memory & Preferences</h2>
+    </div>
+    <p class="section-subtitle">Help Claude understand who you are so every conversation is tailored to you.</p>
+
+    <h3>Profile preferences</h3>
+    <p>Open <strong>Settings</strong> (click your initials, lower-left) and fill in your name, role, and communication preferences. These apply across all conversations — set once, benefit everywhere.</p>
+    <figure>
+      <div class="img-wrap"><img src="https://drive.google.com/uc?export=view&id=1OWFmIsc_P3U-GJ4nB1QqQ1a8aMhL2KJ1" alt="Profile preferences"></div>
+      <figcaption>Tell Claude about yourself once — it remembers across all chats</figcaption>
+    </figure>
+
+    <h3>Memory</h3>
+    <p>Memory lets Claude <strong>learn from your conversations over time</strong> — your projects, working style, and preferences. Toggle it on in <strong>Settings → Capabilities</strong>. You can review, edit, or delete memories at any time, or simply tell Claude to remember or forget things in conversation.</p>
+    <figure>
+      <div class="img-wrap"><img src="https://drive.google.com/uc?export=view&id=1goouO23xv73RTHtTIykjfMBusssQGIpe" alt="Memory settings"></div>
+      <figcaption>Always in control of what Claude remembers</figcaption>
+    </figure>
+    <div class="tip"><strong>Tip</strong> Use <strong>Incognito mode</strong> (ghost icon, upper-right) for conversations you don't want saved to history or memory.</div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════ COWORK ═══════════ -->
+  <section id="cowork">
+    <div class="section-header">
+      <span class="icon">🤖</span>
+      <h2>Cowork <span class="badge">Desktop App</span></h2>
+    </div>
+    <p class="section-subtitle">Hand off entire tasks — not just questions, but outcomes. Claude plans, reads files, and delivers finished work.</p>
+
+    <h3>How it works</h3>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-text">Open the <strong>Claude Desktop app</strong> and click the <strong>Cowork</strong> tab.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">Describe the outcome — "organize these files," "turn these notes into a presentation."</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">Review Claude's plan, grant folder access, and let it run.</div></div>
+    </div>
+    <figure>
+      <div class="img-wrap"><img src="https://drive.google.com/uc?export=view&id=11blF5M2gofmZXoNS39mBGMYJX8m7oDv0" alt="Cowork mode"></div>
+      <figcaption>Describe a task, review the plan, let Claude handle the rest</figcaption>
+    </figure>
+
+    <h3>Great for</h3>
+    <div class="card-row">
+      <div class="card">
+        <div class="card-icon">📂</div>
+        <div class="card-title">File organization</div>
+        <div class="card-desc">Sort, rename, and restructure</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">📝</div>
+        <div class="card-title">Document creation</div>
+        <div class="card-desc">Notes → polished docs & slides</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <div class="card-title">Data analysis</div>
+        <div class="card-desc">Spreadsheets with working formulas</div>
+      </div>
+    </div>
+    <div class="tip"><strong>Tip</strong> Cowork requires the desktop app and won't run in the browser. Keep the app open while Claude works.</div>
+  </section>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <h3>You're all set 🎉</h3>
+    <p>Start a conversation, create a project, and explore. The best way to learn Claude is to use it.</p>
+  </div>
+
+</div>
+
+<!-- SMOOTH SCROLL + ACTIVE NAV -->
+<script>
+  document.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) {
+        window.scrollTo({ top: target.offsetTop - 56, behavior: 'smooth' });
+      }
+    });
+  });
+
+  const navLinks = document.querySelectorAll('nav a');
+  const sections = document.querySelectorAll('section[id]');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 120) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+
+</body>
+</html>
